@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Asistente UIP</title>
-
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #d1eaff, #f2f6ff);
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
+      padding: 20px;
     }
 
     .card {
@@ -24,6 +25,7 @@
       padding: 28px;
       border: 2px solid #007acc;
       color: #1a1a1a;
+      margin-bottom: 20px;
     }
 
     .header {
@@ -55,6 +57,8 @@
       margin-bottom: 20px;
       display: flex;
       gap: 10px;
+      width: 100%;
+      max-width: 420px;
     }
 
     .icon {
@@ -83,7 +87,7 @@
       background: #f9f9f9;
     }
 
-    .submit-btn {
+    .submit-btn, .reset-btn {
       width: 100%;
       padding: 12px;
       font-size: 18px;
@@ -95,7 +99,8 @@
       margin-top: 18px;
     }
 
-    .submit-btn:hover {
+    .submit-btn:hover,
+    .reset-btn:hover {
       background-color: #005c99;
     }
 
@@ -113,7 +118,7 @@
         font-size: 16px;
       }
 
-      .submit-btn {
+      .submit-btn, .reset-btn {
         font-size: 20px;
       }
     }
@@ -142,24 +147,80 @@
       <input type="text" id="metas" placeholder="">
 
       <button type="button" id="mostrar-btn" class="submit-btn">Ver carrera recomendada</button>
+      <button type="button" id="reset-btn" class="reset-btn">Reiniciar</button>
     </form>
   </div>
 
-  <div id="resultado" class="chat-box" style="display: none;">
-    <div class="icon">🎓</div>
-    <div class="message" id="texto-resultado">
-      Aquí aparecerá tu carrera recomendada.
-    </div>
-  </div>
+  <div id="resultado-container" style="width: 100%; max-width: 420px;"></div>
 
   <script>
-    document.getElementById('mostrar-btn').addEventListener('click', function () {
-      const resultado = document.getElementById('resultado');
-      const texto = document.getElementById('texto-resultado');
+    const mostrarBtn = document.getElementById('mostrar-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultadoContainer = document.getElementById('resultado-container');
 
-      texto.textContent = "Basado en tus intereses y habilidades, podrías estudiar Ingeniería en Sistemas o Ciencia de Datos.";
+    const interesesInput = document.getElementById('intereses');
+    const habilidadesInput = document.getElementById('habilidades');
+    const metasInput = document.getElementById('metas');
 
-      resultado.style.display = 'flex';
+    let contador = 1;
+
+    const carreras = [
+      {
+        nombre: "Ingeniería en Sistemas",
+        descripcion: "Desarrolla y gestiona sistemas tecnológicos, software y redes.",
+        razones: "Ideal si te interesa la tecnología, la lógica y la resolución de problemas."
+      },
+      {
+        nombre: "Ciencia de Datos",
+        descripcion: "Analiza grandes volúmenes de datos para obtener conclusiones útiles.",
+        razones: "Perfecta si tienes habilidades analíticas y te gustan los números."
+      },
+      {
+        nombre: "Diseño Gráfico",
+        descripcion: "Crea contenido visual para marcas, productos y medios digitales.",
+        razones: "Buena opción si te apasiona lo visual, creativo y el diseño."
+      },
+      {
+        nombre: "Psicología Organizacional",
+        descripcion: "Estudia el comportamiento humano en contextos laborales.",
+        razones: "Recomendada si te interesa ayudar a las personas y mejorar ambientes de trabajo."
+      },
+      {
+        nombre: "Administración de Empresas",
+        descripcion: "Gestiona recursos, personas y procesos en una organización.",
+        razones: "Si tienes habilidades para liderar, planificar y tomar decisiones."
+      }
+    ];
+
+    mostrarBtn.addEventListener('click', () => {
+      const intereses = interesesInput.value;
+      const habilidades = habilidadesInput.value;
+      const metas = metasInput.value;
+
+      const sugerencia = carreras[Math.floor(Math.random() * carreras.length)];
+
+      const resultadoBox = document.createElement('div');
+      resultadoBox.classList.add('chat-box');
+      resultadoBox.innerHTML = `
+        <div class="icon">🎓</div>
+        <div class="message">
+          <strong>${contador++}. ${sugerencia.nombre}</strong><br>
+          <em>${sugerencia.descripcion}</em><br><br>
+          <strong>¿Por qué?</strong> ${sugerencia.razones}<br>
+          <strong>Tus intereses:</strong> ${intereses || "No especificado"}<br>
+          <strong>Habilidades:</strong> ${habilidades || "No especificado"}<br>
+          <strong>Metas:</strong> ${metas || "No especificado"}
+        </div>
+      `;
+      resultadoContainer.appendChild(resultadoBox);
+    });
+
+    resetBtn.addEventListener('click', () => {
+      interesesInput.value = '';
+      habilidadesInput.value = '';
+      metasInput.value = '';
+      resultadoContainer.innerHTML = '';
+      contador = 1;
     });
   </script>
 </body>
